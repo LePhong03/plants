@@ -132,9 +132,11 @@ function addcart(productPrice, productImg, productName) {
     cartTable.append(addtr)
     carttotal()
     deletecart()
-    // SendMailOrder(productPrice, productName)
+    SendMailOrder(productPrice, productName)
 }
 let products = []
+
+
 
 //------total price--------//
 function carttotal() {
@@ -203,27 +205,29 @@ cartbtn.addEventListener("click", function () {
 
 })
 
-// const SendMailOrder = (productPrice, productName) => {
-//     var params = {
-//         from_name: document.getElementById("name").value,
-//         email: document.getElementById("email").value,
-//         phone: document.getElementById("phone").value,
-//         message: document.getElementById("message").value,
-//     }
-//     const info = { productName, productPrice }
-//     products.push(info)
-//     console.log(products)
+const SendMailOrder = (productPrice, productName) => {
 
+    const info = { productName, productPrice }
+    if (productName && productPrice) products.push(info)
+    let values = []
+    document.querySelectorAll(".quantity").forEach(item => values.push(item?.value))
+    if (products?.length === values?.length) products?.map((item, index) => item.quantity = values[index])
+    var params = {
+        from_name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        message: document.getElementById("message").value,
+        products: JSON.stringify(products),
+    }
+    if ((params.from_name || "").trim() !== "" && (params.email || "").trim() !== "" && (params.phone || "").trim() !== "") {
+        emailjs.send("service_lo6q6u2", "template_gbgkod5", params).then(function (res) {
+            Swal.fire({
+                title: "Thành công",
+                text: "Bạn đã gửi phản hồi!",
+                icon: "success"
+            });
+            console.log(res)
+        })
+    }
 
-//     if ((params.from_name || "").trim() === "") alert("khong duoc de trong");
-//     else if ((params.email || "").trim() === "") alert("khong duoc de trong");
-//     else if ((params.phone || "").trim() === "") alert("khong duoc de trong");
-//     else emailjs.send("service_x7s3pyy", "template_icvokua", params).then(function (res) {
-//         Swal.fire({
-//             title: "Thành công",
-//             text: "Bạn đã gửi phản hồi!",
-//             icon: "success"
-//         });
-//     })
-
-// }
+}
